@@ -145,8 +145,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="my_mfc_git_test_1221.cpp" />
+    <ClCompile Include="my_mfc_git_test_class.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="my_mfc_git_test_class.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

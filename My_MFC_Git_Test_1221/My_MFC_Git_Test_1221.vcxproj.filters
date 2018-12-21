@@ -18,9 +18,15 @@
     <ClCompile Include="my_mfc_git_test_1221.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
+    <ClCompile Include="my_mfc_git_test_class.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="my_mfc_git_test_class.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>
