@@ -40,7 +40,7 @@ IMPLEMENT_DYNCREATE(MyFrame, CFrameWnd)
 BEGIN_MESSAGE_MAP(MyFrame, CFrameWnd)
 	ON_COMMAND(ID_SWITCHMENU, OnSwitchMenu)
 	ON_COMMAND(ID_DYNAMICMENU_CREATEITEM, OnCreateItem)
-	ON_COMMAND(ID_DeleteItem, OnDeleteItem)
+	ON_COMMAND(IDM_DeleteItem, OnDeleteItem)
 	ON_COMMAND(ID_RED, OnRed)
 	ON_COMMAND(ID_GREEN, OnGreen)
 	ON_COMMAND(ID_BLUE, OnBlue)
@@ -58,7 +58,7 @@ MyFrame::MyFrame() {
 				 MAKEINTRESOURCE(IDR_MENU4));            //the ID of menu
 	system_menu = GetSystemMenu(FALSE);            //gets the system menu
 	system_menu->AppendMenu(MF_SEPARATOR);        //inserts the separator line
-	system_menu->AppendMenu(MF_STRING, IDR_MENU5, _T("Insert by me!"));          //inserts the option
+	system_menu->AppendMenu(MF_STRING, IDM_INSERT, _T("Insert by me!"));          //inserts the option
 	color = RGB(255, 0, 0);                        //sets the point color to red
 }
 void MyFrame::SetCheck() {
@@ -104,6 +104,10 @@ afx_msg void MyFrame::OnSwitchMenu() {
 	insert_menu.LoadMenu(IDR_MENU5);                    //load the menu source
 	main_menu.LoadMenu(IDR_MENU3);
 	main_menu.AppendMenu(MF_POPUP, (UINT)insert_menu.m_hMenu, _T("Color Menu"));
+	sub_menu = main_menu.GetSubMenu(1);
+	sub_menu->AppendMenuW(MF_SEPARATOR);
+	sub_menu->InsertMenu(ID_DYNAMICMENU_CREATEITEM, MF_BYCOMMAND | MF_STRING, IDM_InsertItem, _T("Insert a Item"));
+	sub_menu->InsertMenu(ID_DYNAMICMENU_CREATEITEM, MF_BYCOMMAND | MF_POPUP, (UINT) insert_menu.m_hMenu, _T("Insert a Item"));
 	SetCheck();
 	sub_menu->InsertMenu(ID_DYNAMICMENU_CREATEITEM, MF_BYCOMMAND | MF_SEPARATOR);
 	insert_menu.Detach();
