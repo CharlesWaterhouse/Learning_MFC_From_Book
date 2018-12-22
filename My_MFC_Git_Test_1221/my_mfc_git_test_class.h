@@ -1,5 +1,5 @@
 #pragma once
-///asfd
+///asfddsf
 #include <afxwin.h>
 #include <afxtempl.h>
 #include "resource.h"
