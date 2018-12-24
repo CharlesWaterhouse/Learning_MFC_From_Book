@@ -1,8 +1,9 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ 產生的 Include 檔案。
-// 由 My_MFC_Git_Test_1221.rc 使用
+// Microsoft Visual C++ generated include file.
+// Used by My_MFC_Git_Test_1221.rc
 //
 #define IDR_MENU6                       120
+#define IDR_ACCELERATOR1                121
 #define ID_FILE_EXIT                    40001
 #define IDR_POP                         40004
 #define ID_KJH                          40005
@@ -16,8 +17,8 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        121
-#define _APS_NEXT_COMMAND_VALUE         40026
+#define _APS_NEXT_RESOURCE_VALUE        122
+#define _APS_NEXT_COMMAND_VALUE         40027
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
