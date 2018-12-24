@@ -22,6 +22,7 @@
 #define ID_BLUE                         40020
 #define ID_DYNAMICMENU_CREATEITEM       40021
 #define ID_SWITCHMENU                   40022
+#define ID_GREEN40022                   40022
 #define IDM_DeleteItem                  40023
 #define IDM_NewItem                     40024
 
@@ -30,7 +31,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        120
-#define _APS_NEXT_COMMAND_VALUE         40022
+#define _APS_NEXT_COMMAND_VALUE         40023
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

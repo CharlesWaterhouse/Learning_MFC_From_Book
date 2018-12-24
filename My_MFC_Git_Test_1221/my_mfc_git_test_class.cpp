@@ -43,10 +43,10 @@ BEGIN_MESSAGE_MAP(MyFrame, CFrameWnd)
 	ON_COMMAND(ID_RED, OnRed)
 	ON_COMMAND(ID_GREEN, OnGreen)
 	ON_COMMAND(ID_BLUE, OnBlue)
+	ON_WM_CONTEXTMENU()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
-	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 MyFrame::MyFrame() {
 	Create(NULL,                                   //create a standard window
@@ -56,7 +56,7 @@ MyFrame::MyFrame() {
 				 NULL,                                   //the pointer of parent window
 				 MAKEINTRESOURCE(IDR_MENU4));            //the ID of menu
 	system_menu = GetSystemMenu(FALSE);            //gets the system menu
-	system_menu->AppendMenu(MF_SEPARATOR);        //inserts the separator line
+	system_menu->AppendMenu(MF_SEPARATOR);         //inserts the separator line
 	system_menu->AppendMenu(MF_STRING, 0, _T("Insert by me!"));          //inserts the option
 	color = RGB(255, 0, 0);                        //sets the point color to red
 }
@@ -102,11 +102,11 @@ afx_msg void MyFrame::OnSwitchMenu() {
 	CMenu insert_menu;                                  //create a menu object
 	insert_menu.LoadMenu(IDR_MENU5);                    //load the menu source
 	main_menu.LoadMenu(IDR_MENU3);
-	main_menu.AppendMenu(MF_POPUP, (UINT)insert_menu.m_hMenu, _T("Color Menu"));
+	main_menu.AppendMenu(MF_POPUP, (UINT)insert_menu.m_hMenu, _T("Color Menu1"));
 	sub_menu = main_menu.GetSubMenu(1);
 	sub_menu->AppendMenuW(MF_SEPARATOR);
-	sub_menu->InsertMenu(ID_DYNAMICMENU_CREATEITEM, MF_BYCOMMAND | MF_STRING, 0, _T("Insert a Item"));
-	sub_menu->InsertMenu(ID_DYNAMICMENU_CREATEITEM, MF_BYCOMMAND | MF_POPUP, (UINT) insert_menu.m_hMenu, _T("Insert a Item"));
+	sub_menu->InsertMenu(ID_DYNAMICMENU_CREATEITEM, MF_BYCOMMAND | MF_STRING, 0, _T("Insert a Item1"));
+	sub_menu->InsertMenu(ID_DYNAMICMENU_CREATEITEM, MF_BYCOMMAND | MF_POPUP, (UINT) insert_menu.m_hMenu, _T("Insert a Item2"));
 	SetCheck();
 	sub_menu->InsertMenu(ID_DYNAMICMENU_CREATEITEM, MF_BYCOMMAND | MF_SEPARATOR);
 	insert_menu.Detach();
@@ -114,10 +114,12 @@ afx_msg void MyFrame::OnSwitchMenu() {
 }
 afx_msg void MyFrame::OnCreateItem() {
 	main_menu.ModifyMenu(ID_DYNAMICMENU_CREATEITEM, MF_BYCOMMAND, IDM_DeleteItem, _T("Delete Item"));
+	sub_menu = main_menu.GetSubMenu(1);
 	sub_menu->AppendMenu(MF_STRING, IDM_NewItem, _T("New Item"));
 }
 afx_msg void MyFrame::OnDeleteItem() {
 	main_menu.ModifyMenu(IDM_DeleteItem, MF_BYCOMMAND, ID_DYNAMICMENU_CREATEITEM, _T("Create Item"));
+	sub_menu = main_menu.GetSubMenu(1);
 	sub_menu->DeleteMenu(IDM_NewItem, MF_BYCOMMAND);
 }
 afx_msg void MyFrame::OnContextMenu(CWnd* p_wnd, CPoint point) {
