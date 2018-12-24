@@ -4,39 +4,38 @@
 #include "my_mfc_git_test_class.h"
 
 
-//class MyDocument : public CDocument
-IMPLEMENT_DYNCREATE(MyDocument, CDocument)
-BEGIN_MESSAGE_MAP(MyDocument, CDocument)
-END_MESSAGE_MAP()
-
-//class MyView : public CView 
-IMPLEMENT_DYNCREATE(MyView, CView)
-BEGIN_MESSAGE_MAP(MyView, CView)
-	ON_WM_LBUTTONDOWN()
-	ON_WM_MOUSEMOVE()
-	ON_WM_LBUTTONUP()
-END_MESSAGE_MAP()
-void MyView::OnDraw(CDC* p_dc) {
-	MyDocument* p_doc = (MyDocument*)GetDocument();
-	int num = p_doc->GetSize();
-	for (int i = 0; i < num; ++i) {
-		CPoint point = p_doc->GetPoint(i);
-		p_dc->SetPixel(point, RGB(255, 0, 0));
-	}
-}
-afx_msg void MyView::OnLButtonDown(UINT, CPoint point) { SetCapture(); }
-afx_msg void MyView::OnLButtonUp(UINT, CPoint point) { ReleaseCapture(); }
-afx_msg void MyView::OnMouseMove(UINT, CPoint point) { 
-	if (this == GetCapture()) {
-		CClientDC aDC(this);
-		aDC.SetPixel(point, RGB(255, 0, 0));
-		MyDocument* p_doc = (MyDocument*)GetDocument();
-		p_doc->AddPoint(point);
-	}
-}
+////class MyDocument : public CDocument
+//IMPLEMENT_DYNCREATE(MyDocument, CDocument)
+//BEGIN_MESSAGE_MAP(MyDocument, CDocument)
+//END_MESSAGE_MAP()
+//
+////class MyView : public CView 
+//IMPLEMENT_DYNCREATE(MyView, CView)
+//BEGIN_MESSAGE_MAP(MyView, CView)
+//	ON_WM_LBUTTONDOWN()
+//	ON_WM_MOUSEMOVE()
+//	ON_WM_LBUTTONUP()
+//END_MESSAGE_MAP()
+//void MyView::OnDraw(CDC* p_dc) {
+//	MyDocument* p_doc = (MyDocument*)GetDocument();
+//	int num = p_doc->GetSize();
+//	for (int i = 0; i < num; ++i) {
+//		CPoint point = p_doc->GetPoint(i);
+//		p_dc->SetPixel(point, RGB(255, 0, 0));
+//	}
+//}
+//afx_msg void MyView::OnLButtonDown(UINT, CPoint point) { SetCapture(); }
+//afx_msg void MyView::OnLButtonUp(UINT, CPoint point) { ReleaseCapture(); }
+//afx_msg void MyView::OnMouseMove(UINT, CPoint point) { 
+//	if (this == GetCapture()) {
+//		CClientDC aDC(this);
+//		aDC.SetPixel(point, RGB(255, 0, 0));
+//		MyDocument* p_doc = (MyDocument*)GetDocument();
+//		p_doc->AddPoint(point);
+//	}
+//}
 
 //class MyFrame : public CFrameWnd 
-IMPLEMENT_DYNCREATE(MyFrame, CFrameWnd)
 BEGIN_MESSAGE_MAP(MyFrame, CFrameWnd)
 	ON_COMMAND(ID_SWITCHMENU, OnSwitchMenu)
 	ON_COMMAND(ID_DYNAMICMENU_CREATEITEM, OnCreateItem)
@@ -58,7 +57,7 @@ MyFrame::MyFrame() {
 				 MAKEINTRESOURCE(IDR_MENU4));            //the ID of menu
 	system_menu = GetSystemMenu(FALSE);            //gets the system menu
 	system_menu->AppendMenu(MF_SEPARATOR);        //inserts the separator line
-	system_menu->AppendMenu(MF_STRING, IDM_INSERT, _T("Insert by me!"));          //inserts the option
+	system_menu->AppendMenu(MF_STRING, 0, _T("Insert by me!"));          //inserts the option
 	color = RGB(255, 0, 0);                        //sets the point color to red
 }
 void MyFrame::SetCheck() {
@@ -106,7 +105,7 @@ afx_msg void MyFrame::OnSwitchMenu() {
 	main_menu.AppendMenu(MF_POPUP, (UINT)insert_menu.m_hMenu, _T("Color Menu"));
 	sub_menu = main_menu.GetSubMenu(1);
 	sub_menu->AppendMenuW(MF_SEPARATOR);
-	sub_menu->InsertMenu(ID_DYNAMICMENU_CREATEITEM, MF_BYCOMMAND | MF_STRING, IDM_InsertItem, _T("Insert a Item"));
+	sub_menu->InsertMenu(ID_DYNAMICMENU_CREATEITEM, MF_BYCOMMAND | MF_STRING, 0, _T("Insert a Item"));
 	sub_menu->InsertMenu(ID_DYNAMICMENU_CREATEITEM, MF_BYCOMMAND | MF_POPUP, (UINT) insert_menu.m_hMenu, _T("Insert a Item"));
 	SetCheck();
 	sub_menu->InsertMenu(ID_DYNAMICMENU_CREATEITEM, MF_BYCOMMAND | MF_SEPARATOR);
@@ -158,4 +157,22 @@ afx_msg void MyFrame::OnMouseMove(UINT n_flags, CPoint point) {
 
 
 //class MyApp : public CWinApp 
+//BOOL MyApp::InitInstance() {
+//	/*this document class is a object for integrate that includes resources, the document, view, and frame classes.*/
+//	CSingleDocTemplate* p_c_single_document_template;
+//	p_c_single_document_template = new CSingleDocTemplate(IDR_MENU1, RUNTIME_CLASS(MyDocument), RUNTIME_CLASS(MyFrame), RUNTIME_CLASS(MyView));
+//	AddDocTemplate(p_c_single_document_template);                                             // we set the template object to application object(this MyApp object)
+//	CDocument* p_c_document;
+//	p_c_document = p_c_single_document_template->CreateNewDocument();                         //create document object by template object
+//	m_pMainWnd = p_c_single_document_template->CreateNewFrame(p_c_document, NULL);            //create frame object by template object
+//	p_c_single_document_template->InitialUpdateFrame((CFrameWnd*)m_pMainWnd, p_c_document);   //initializes the frame object and links it to view object
+//	m_pMainWnd->ShowWindow(SW_SHOW);
+//	return true;
+//}
+BOOL MyApp::InitInstance() {
+	CFrameWnd* p_frame = new MyFrame;
+	m_pMainWnd = p_frame;
+	p_frame->ShowWindow(SW_SHOW);
+	return true;
+}
 
