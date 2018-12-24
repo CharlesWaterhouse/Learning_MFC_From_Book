@@ -1,12 +1,9 @@
 #pragma once
 
 #include <afxwin.h>
-//#include <afxtempl.h>
 #include <assert.h>
 #include "resource.h"
 
-//class MyDocument;
-//class MyView;
 class MyFrame;
 class MyApp;
 
