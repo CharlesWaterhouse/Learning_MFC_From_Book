@@ -1,6 +1,7 @@
 #pragma once
 
 #include <afxwin.h>
+#include <afxext.h>
 #include "resource.h"
 
 class MyFrame;
@@ -11,6 +12,8 @@ class MyFrame : public CFrameWnd {
 	DECLARE_MESSAGE_MAP();
 private:
 	COLORREF color;
+	CToolBar tool_bar;
+	CStatusBar status_bar;
 public:
 	MyFrame();
 
@@ -23,6 +26,7 @@ public:
 	afx_msg void OnLButtonDown(UINT n_flags, CPoint point);
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
 	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
+	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);
 };
 
 
