@@ -36,10 +36,10 @@ afx_msg void MyFrame::OnBlue() {
 afx_msg void MyFrame::OnUpdateRed(CCmdUI* a_cmd_ui) {
 	a_cmd_ui->SetCheck(color == RGB(255, 0, 0));
 }
-afx_msg void MyFrame::OnUpdateBlue(CCmdUI* a_cmd_ui) {
+afx_msg void MyFrame::OnUpdateGreen(CCmdUI* a_cmd_ui) {
 	a_cmd_ui->SetCheck(color == RGB(0, 255, 0));
 }
-afx_msg void MyFrame::OnUpdateGreen(CCmdUI* a_cmd_ui) {
+afx_msg void MyFrame::OnUpdateBlue(CCmdUI* a_cmd_ui) {
 	a_cmd_ui->SetCheck(color == RGB(0, 0, 255));
 }
 afx_msg void MyFrame::OnLButtonDown(UINT n_flags, CPoint point) {
