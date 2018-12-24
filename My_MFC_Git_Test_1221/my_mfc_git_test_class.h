@@ -7,30 +7,8 @@
 class MyFrame;
 class MyApp;
 
-//class MyDocument : public CDocument {
-//	DECLARE_DYNCREATE(MyDocument)                        //declares it's run-time class
-//	DECLARE_MESSAGE_MAP()
-//public:
-//	void AddPoint(CPoint p) { array_cpoint.Add(p); }     // adds a point mouse has went 
-//	CPoint GetPoint(int i) { return array_cpoint[i]; }   // gets a point from array_cpoint
-//	int GetSize() { return array_cpoint.GetSize(); }     // get the amount of recorded points
-//private:
-//	CArray<CPoint, CPoint&> array_cpoint;                //records the points that mouse has went through.
-//};
-//
-//class MyView : public CView {
-//	DECLARE_DYNCREATE(MyView)                            //declares it's run-time class
-//	DECLARE_MESSAGE_MAP()
-//public:
-//	void OnDraw(CDC* p_dc);                              // for override
-//	afx_msg void OnLButtonDown(UINT, CPoint point);
-//	afx_msg void OnMouseMove(UINT, CPoint point);
-//	afx_msg void OnLButtonUp(UINT, CPoint point);
-//};
 
 class MyFrame : public CFrameWnd {
-	//IMPLEMENT_DYNCREATE(MyFrame, CFrameWnd)
-	DECLARE_DYNCREATE(MyFrame)                           //declares it's run-time class BUTIDONTKNOW!
 	DECLARE_MESSAGE_MAP();
 private:
 	CMenu main_menu, *system_menu, *pop_menu, *sub_menu;
