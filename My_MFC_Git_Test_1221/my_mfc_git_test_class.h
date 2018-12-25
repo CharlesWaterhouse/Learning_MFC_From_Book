@@ -10,10 +10,14 @@ class MyApp;
 class MyFrame : public CFrameWnd {
 	DECLARE_MESSAGE_MAP();
 private:
+	CMenu* p_menu;
 	COLORREF color;
+	HCURSOR h_cursor;
+	CBitmap bmp;
 public:
 	MyFrame();
 
+	afx_msg void OnBmpItem();
 	afx_msg void OnRed();
 	afx_msg void OnGreen();
 	afx_msg void OnBlue();
