@@ -6,7 +6,6 @@
 
 class MyFrame;
 class MyApp;
- 
 
 class MyFrame : public CFrameWnd {
 	DECLARE_MESSAGE_MAP();
