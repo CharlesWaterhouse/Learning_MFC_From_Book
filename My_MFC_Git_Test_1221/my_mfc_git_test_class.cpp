@@ -34,8 +34,8 @@ afx_msg int MyFrame::OnCreate(LPCREATESTRUCT lp_create_struct) {
 	EnableDocking(CBRS_ALIGN_ANY);
 	DockControlBar(&tool_bar);
 	static UINT indicators[] = { 
-		ID_SEPARATOR, 
-		IDS_STRING127 
+		IDS_STRING127,
+		IDS_STRING128
 	};
 	status_bar.Create(this);
 	status_bar.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT));

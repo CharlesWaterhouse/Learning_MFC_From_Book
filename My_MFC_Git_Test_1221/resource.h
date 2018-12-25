@@ -7,6 +7,7 @@
 #define IDR_ACCELERATOR2                122
 #define IDR_TOOLBAR1                    123
 #define IDS_STRING127                   127
+#define IDS_STRING128                   128
 #define ID_FILE_EXIT                    40001
 #define IDR_POP                         40004
 #define ID_KJH                          40005
