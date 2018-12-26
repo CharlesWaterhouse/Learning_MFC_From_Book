@@ -3,66 +3,44 @@
 #include "resource.h"
 #include "my_mfc_git_test_class.h"
 
+//class MyDocument :public CDocument
+IMPLEMENT_DYNCREATE(MyDocument,CDocument)
+BEGIN_MESSAGE_MAP(MyDocument, CDocument)
+END_MESSAGE_MAP()
+
 //class MyFrame : public CFrameWnd 
+IMPLEMENT_DYNCREATE(MyFrame, CFrameWnd)
 BEGIN_MESSAGE_MAP(MyFrame, CFrameWnd)
-	ON_COMMAND(IDB_BmpItem,OnBmpItem)
+	ON_WM_CREATE()
+END_MESSAGE_MAP()
+MyFrame::MyFrame() {}
+MyFrame::~MyFrame() {}
+afx_msg int MyFrame::OnCreate(LPCREATESTRUCT lp_create_struct) {
+	if (CFrameWnd::OnCreate(lp_create_struct)) { return 1; }
+	toolbar.Create(this);
+
+}
+
+//class MyView :public CView
+IMPLEMENT_DYNCREATE(MyView, CView)
+BEGIN_MESSAGE_MAP(MyView, CView)
+	ON_WM_LBUTTONDOWN()
+	ON_WM_MOUSEMOVE()
+	ON_WM_LBUTTONUP()
 	ON_COMMAND(ID_COLORMENU_RED, OnRed)
 	ON_COMMAND(ID_COLORMENU_GREEN, OnGreen)
 	ON_COMMAND(ID_COLORMENU_BLUE, OnBlue)
 	ON_UPDATE_COMMAND_UI(ID_COLORMENU_RED, OnUpdateRed)
 	ON_UPDATE_COMMAND_UI(ID_COLORMENU_GREEN, OnUpdateGreen)
 	ON_UPDATE_COMMAND_UI(ID_COLORMENU_BLUE, OnUpdateBlue)
-	ON_WM_LBUTTONDOWN()
-	ON_WM_LBUTTONUP()
-	ON_WM_MOUSEMOVE()
+	ON_COMMAND(IDM_Line, OnLine)
+	ON_COMMAND(IDM_Rect, OnRect)
+	ON_COMMAND(IDM_ELLipse, OnEllipse)
+	ON_UPDATE_COMMAND_UI(IDM_Line, OnUpdatUpdateLine)
+	ON_UPDATE_COMMAND_UI(IDM_Rect, OnUpdatRect)
+	ON_UPDATE_COMMAND_UI(IDM_ELLipse, OnUpdatEllipse)
 END_MESSAGE_MAP()
-MyFrame::MyFrame() {
-	Create(NULL,                                   //create a standard window
-			   _T("ICON Bitmap CURSOR"),                             //window title
-				 WS_OVERLAPPEDWINDOW | WS_VISIBLE,       //window style
-				 rectDefault,                            //window size
-				 NULL,                                   //the pointer of parent window
-				 MAKEINTRESOURCE(IDR_MENU6));            //the ID of menu
-	color = RGB(255, 0, 0);                        //sets the point color to red
-	bmp.LoadBitmap(IDB_BITMAP1);
-	p_menu = GetMenu()->GetSubMenu(0);
-	p_menu->AppendMenuW(MF_BITMAP, IDB_BmpItem, &bmp);
-}
-afx_msg void MyFrame::OnBmpItem() {
-	MessageBox(_T("This is a BMP item."));
-}
-afx_msg void MyFrame::OnRed() {
-	color = RGB(255, 0, 0);
-}
-afx_msg void MyFrame::OnGreen() {
-	color = RGB(0, 255, 0);
-}
-afx_msg void MyFrame::OnBlue() {
-	color = RGB(0, 0, 255);
-}
-afx_msg void MyFrame::OnUpdateRed(CCmdUI* a_cmd_ui) {
-	a_cmd_ui->SetCheck(color == RGB(255, 0, 0));
-}
-afx_msg void MyFrame::OnUpdateGreen(CCmdUI* a_cmd_ui) {
-	a_cmd_ui->SetCheck(color == RGB(0, 255, 0));
-}
-afx_msg void MyFrame::OnUpdateBlue(CCmdUI* a_cmd_ui) {
-	a_cmd_ui->SetCheck(color == RGB(0, 0, 255));
-}
-afx_msg void MyFrame::OnLButtonDown(UINT n_flags, CPoint point) {
-	h_cursor = AfxGetApp()->LoadCursorW(IDC_CURSOR1);
-	::SetCursor(h_cursor);
-	SetCapture();
-}
-afx_msg void MyFrame::OnLButtonUp(UINT n_flags, CPoint point) {
-	ReleaseCapture();
-}
-afx_msg void MyFrame::OnMouseMove(UINT n_flags, CPoint point) {
-	if (this == GetCapture()) {
-		CClientDC a_dc(this);
-		a_dc.SetPixel(point, color);
-	}
-}
+
 
 //class MyApp : public CWinApp 
 BOOL MyApp::InitInstance() {
