@@ -158,6 +158,8 @@
   <ItemGroup>
     <Image Include="bitmap1.bmp" />
     <Image Include="icon1.ico" />
+    <Image Include="toolbar1.bmp" />
+    <Image Include="toolbar2.bmp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cursor1.cur" />

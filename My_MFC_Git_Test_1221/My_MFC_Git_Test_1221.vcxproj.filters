@@ -42,6 +42,12 @@
     <Image Include="icon1.ico">
       <Filter>資源檔</Filter>
     </Image>
+    <Image Include="toolbar1.bmp">
+      <Filter>資源檔</Filter>
+    </Image>
+    <Image Include="toolbar2.bmp">
+      <Filter>資源檔</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="cursor1.cur">

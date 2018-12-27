@@ -21,24 +21,24 @@ class MyFrame : public CFrameWnd {
 	DECLARE_MESSAGE_MAP();
 private:
 	CMenu* p_menu;
-	CToolBar toolbar;
-	CStatusBar statusbar;
+	CToolBar tool_bar;
 public:
-	MyFrame();                                              //empty: do nothing
-	~MyFrame();                                             //empty: do nothing
-	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);  //TODO
+	CStatusBar status_bar;
+	MyFrame();                                               //It's empty: do nothing
+	~MyFrame();                                              //It's empty: do nothing
+	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);  
 
 };
 
 class MyView :public CView {
 	DECLARE_DYNCREATE(MyView)
-	DECLARE_MESSAGE_MAP();
+	DECLARE_MESSAGE_MAP()
 public:
-	MyView();
-	~MyView();
+	MyView();                                                //It's empty: do nothing
+	~MyView();                                               //It's empty: do nothing
 
-	afx_msg void OnDraw(CDC* p_dc);
-	afx_msg void OnLButtonDown(UINT n_flags, CPoint point);
+	afx_msg void OnDraw(CDC* p_dc);                          //It's empty: do nothing
+	afx_msg void OnLButtonDown(UINT n_flags, CPoint point); 
 	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
 	afx_msg void OnRed();
