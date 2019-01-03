@@ -28,7 +28,7 @@ public:
 	void SetPoint(CPoint start_point, CPoint end_point);
 protected:
 	CPoint start_point_, end_point_;                          //the start_point and end_point of shapenum;
-	int shape_num_ = 0;											                  //It's unused
+	int shape_num_ = 0;
 };
 
 class LineShape :public Shape {
@@ -36,9 +36,31 @@ class LineShape :public Shape {
 public:
 	LineShape();
 	LineShape(CPoint start_point, CPoint end_point);
-	LineShape(const LineShape& l);
+	LineShape(const LineShape& e);
+	LineShape& operator= (LineShape& e);
+	void draw(CDC& a_dc, COLORREF color, COLORREF fcolor, int width, BOOL filled = false);
 };
- 
+
+class RectangleShape :public Shape {
+	friend class MyView;
+public:
+	RectangleShape();
+	RectangleShape(CPoint start_point, CPoint end_point);
+	RectangleShape(const RectangleShape& r);
+	RectangleShape& operator= (RectangleShape& r);
+	void draw(CDC& a_dc, COLORREF color, COLORREF fcolor, int width, BOOL filled = false);
+};
+
+class EllipseShape :public Shape {
+	friend class MyView;
+public:
+	EllipseShape();
+	EllipseShape(CPoint start_point, CPoint end_point);
+	EllipseShape(const EllipseShape& l);
+	EllipseShape& operator= (EllipseShape& l);
+	void draw(CDC& a_dc, COLORREF color, COLORREF fcolor, int width, BOOL filled = false);
+};
+
 class MyDocument :public CDocument {
 	DECLARE_DYNCREATE(MyDocument)
 	DECLARE_MESSAGE_MAP()
@@ -48,10 +70,10 @@ class MyFrame : public CFrameWnd {
 	DECLARE_DYNCREATE(MyFrame)
 	DECLARE_MESSAGE_MAP();
 public:
-	CStatusBar status_bar_;
 	MyFrame();                                               //It's empty: do nothing
 	~MyFrame();                                              //It's empty: do nothing
 	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);  
+	CStatusBar status_bar_;
 private:
 	CMenu* p_menu_;
 	CToolBar tool_bar_;
@@ -61,7 +83,7 @@ class MyView :public CView {
 	DECLARE_DYNCREATE(MyView)
 	DECLARE_MESSAGE_MAP()
 public:
-	MyView();                                                //It's empty: do nothing
+	MyView();      
 	~MyView();                                               //It's empty: do nothing
 
 	afx_msg void OnDraw(CDC* p_dc);                          //It's empty: do nothing
@@ -80,9 +102,16 @@ public:
 	afx_msg void OnUpdatUpdateLine(CCmdUI* p_cmd_ui);
 	afx_msg void OnUpdatRect(CCmdUI* p_cmd_ui);
 	afx_msg void OnUpdatEllipse(CCmdUI* p_cmd_ui);
+private:
+	COLORREF l_color_;
+	COLORREF filled_color_;
+	Shape* p_shape_ = nullptr;
+	LineShape line_shape_;
+	EllipseShape ellipse_shape_;
+	RectangleShape rectangle_shape_;
 };
 
 class MyApp : public CWinApp {
 public:
-	BOOL InitInstance();             //TODO
+	BOOL InitInstance();            
 };

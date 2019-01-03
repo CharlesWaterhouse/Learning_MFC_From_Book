@@ -20,12 +20,64 @@ void Shape::SetPoint(CPoint start_point, CPoint end_point) {
 	end_point_ = end_point;
 }
 
-//class LineShape
+//class LineShape :public Shape
 LineShape::LineShape() {
 	shape_num_ = 0;
 }
 LineShape::LineShape(CPoint start_point, CPoint end_point) : Shape(start_point, end_point, 0) {}
 LineShape::LineShape(const LineShape& l) : Shape(l.start_point_, l.end_point_, 0) {}
+LineShape& LineShape::operator= (LineShape& l) {
+	start_point_ = l.start_point_;
+	end_point_ = l.end_point_;
+	return *this;
+}
+void LineShape::draw(CDC& a_dc, COLORREF color, COLORREF fcolor, int width, BOOL filled) {
+	CPen pen(PS_SOLID, width, color);
+	CPen* old_pen = a_dc.SelectObject(&pen);
+	a_dc.MoveTo(start_point_);
+	a_dc.LineTo(end_point_);
+	a_dc.SelectObject(old_pen);
+}
+
+//class RectangleShape :public Shape
+RectangleShape::RectangleShape() {
+	shape_num_ = 1;
+}
+RectangleShape::RectangleShape(CPoint start_point, CPoint end_point) : Shape(start_point, end_point, 1) {}
+RectangleShape::RectangleShape(const RectangleShape& r) : Shape(r.start_point_, r.end_point_, 1) {}
+RectangleShape& RectangleShape::operator= (RectangleShape& r) {
+	start_point_ = r.start_point_;
+	end_point_ = r.end_point_;
+	return *this;
+}
+void RectangleShape::draw(CDC& a_dc, COLORREF color, COLORREF fcolor, int width, BOOL filled) {
+	CRect rect(start_point_, end_point_);
+	CPen pen(PS_SOLID, width, color);
+	CPen* old_pen = a_dc.SelectObject(&pen);
+	a_dc.SelectStockObject(NULL_BRUSH);
+	a_dc.Rectangle(rect);
+	a_dc.SelectObject(old_pen);
+}
+
+//class EllipseShape :public Shape
+EllipseShape::EllipseShape() {
+	shape_num_ = 2;
+}
+EllipseShape::EllipseShape(CPoint start_point, CPoint end_point) : Shape(start_point, end_point, 2) {}
+EllipseShape::EllipseShape(const EllipseShape& e) : Shape(e.start_point_, e.end_point_, 2) {}
+EllipseShape& EllipseShape::operator= (EllipseShape& e) {
+	start_point_ = e.start_point_;
+	end_point_ = e.end_point_;
+	return *this;
+}
+void EllipseShape::draw(CDC& a_dc, COLORREF color, COLORREF fcolor, int width, BOOL filled) {
+	CRect rect(start_point_, end_point_);
+	CPen pen(PS_SOLID, width, color);
+	CPen* old_pen = a_dc.SelectObject(&pen);
+	a_dc.SelectStockObject(NULL_BRUSH);
+	a_dc.Ellipse(rect);
+	a_dc.SelectObject(old_pen);
+}
 
 //class MyDocument :public CDocument
 IMPLEMENT_DYNCREATE(MyDocument,CDocument)
@@ -74,53 +126,76 @@ BEGIN_MESSAGE_MAP(MyView, CView)
 	ON_UPDATE_COMMAND_UI(ID_SHAPE_RECTANGLE, OnUpdatRect)
 	ON_UPDATE_COMMAND_UI(ID_SHAPE_ELLIPSE, OnUpdatEllipse)
 END_MESSAGE_MAP()
-MyView::MyView() {}
+MyView::MyView() {
+	l_color_ = RGB(255, 0, 0);
+	p_shape_ = &line_shape_;
+}
 MyView::~MyView() {}
 afx_msg void MyView::OnDraw(CDC* p_dc) {}
 afx_msg void MyView::OnLButtonDown(UINT n_flags, CPoint point) {
-	//TODO
+	SetCapture();
+	if (this == GetCapture()) {
+		(*p_shape_).start_point_ = (*p_shape_).end_point_ = point;
+	}
 }
 afx_msg void MyView::OnMouseMove(UINT n_flags, CPoint point) {
-	//TODO
+	if (this == GetCapture()) {
+		CClientDC a_dc(this);
+		a_dc.SetROP2(R2_NOT);
+		(*p_shape_).draw(a_dc, l_color_, filled_color_, 2);
+		(*p_shape_).end_point_ = point;
+		(*p_shape_).draw(a_dc, l_color_, filled_color_, 2);
+	}
 }
 afx_msg void MyView::OnLButtonUp(UINT n_flags, CPoint point) {
-	//TODO
+	if (this == GetCapture()) {
+		CClientDC a_dc(this);
+		(*p_shape_).end_point_ = point;
+		(*p_shape_).draw(a_dc, l_color_, filled_color_, 2);
+		ReleaseCapture();
+	}
 }
 afx_msg void MyView::OnRed() {
+	l_color_ = RGB(255, 0, 0);
 	((MyFrame*)GetParentFrame())->status_bar_.SetPaneText(1, _T("Red"));
 }
 afx_msg void MyView::OnGreen() {
+	l_color_ = RGB(0, 255, 0);
 	((MyFrame*)GetParentFrame())->status_bar_.SetPaneText(1, _T("Green"));
 }
 afx_msg void MyView::OnBlue() {
+	l_color_ = RGB(0, 0, 255);
 	((MyFrame*)GetParentFrame())->status_bar_.SetPaneText(1, _T("Blue"));
 }
 afx_msg void MyView::OnUpdateRed(CCmdUI* a_cmd_ui) {
-	//TODO
+	a_cmd_ui->SetCheck(l_color_ == RGB(255, 0, 0));
 }
 afx_msg void MyView::OnUpdateGreen(CCmdUI* a_cmd_ui) {
-	//TODO
+	a_cmd_ui->SetCheck(l_color_ == RGB(0, 255, 0));
 }
 afx_msg void MyView::OnUpdateBlue(CCmdUI* a_cmd_ui) {
-	//TODO
+	a_cmd_ui->SetCheck(l_color_ == RGB(0, 0, 255));
 }
 afx_msg void MyView::OnLine() {
+	p_shape_ = &line_shape_;
 	((MyFrame*)GetParentFrame())->status_bar_.SetPaneText(2, _T("Line"));
 }
 afx_msg void MyView::OnRect() {
-	((MyFrame*)GetParentFrame())->status_bar_.SetPaneText(2, _T("Rect"));
+	p_shape_ = &rectangle_shape_;
+	((MyFrame*)GetParentFrame())->status_bar_.SetPaneText(2, _T("Rectangle"));
 }
 afx_msg void MyView::OnEllipse() {
+	p_shape_ = &ellipse_shape_;
 	((MyFrame*)GetParentFrame())->status_bar_.SetPaneText(2, _T("Ellipse"));
 }
 afx_msg void MyView::OnUpdatUpdateLine(CCmdUI* a_cmd_ui) {
-	//TODO
+	a_cmd_ui->SetCheck((*p_shape_).shape_num_ == 0);
 }
 afx_msg void MyView::OnUpdatRect(CCmdUI* a_cmd_ui) {
-	//TODO
+	a_cmd_ui->SetCheck((*p_shape_).shape_num_ == 1);
 }
 afx_msg void MyView::OnUpdatEllipse(CCmdUI* a_cmd_ui) {
-	//TODO
+	a_cmd_ui->SetCheck((*p_shape_).shape_num_ == 2);
 }
 
 //class MyApp : public CWinApp 
@@ -132,10 +207,10 @@ BOOL MyApp::InitInstance() {
 																					RUNTIME_CLASS(MyView));
 	AddDocTemplate(a_doc_template);
 	CDocument* a_doc = a_doc_template->CreateNewDocument();
-	CFrameWnd* Frame = a_doc_template->CreateNewFrame(a_doc, NULL);
-	m_pMainWnd = Frame;
-	a_doc_template->InitialUpdateFrame(Frame, a_doc);
-	Frame->ShowWindow(SW_SHOW);
+	CFrameWnd* p_frame = a_doc_template->CreateNewFrame(a_doc, NULL);
+	m_pMainWnd = p_frame;
+	a_doc_template->InitialUpdateFrame(p_frame, a_doc);
+	p_frame->ShowWindow(SW_SHOW);
 	return true;
 }
 
