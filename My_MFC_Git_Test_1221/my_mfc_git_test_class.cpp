@@ -3,6 +3,31 @@
 #include "resource.h"
 #include "my_mfc_git_test_class.h"
 
+//class GraphicObject :public CObject
+GraphicObject::GraphicObject() {}
+GraphicObject::GraphicObject(int shape_num, BOOL filled_state, COLORREF fill_color, COLORREF line_color, int line_width, CPoint start_point, CPoint end_point)
+		:shape_num_(shape_num), filled_state_(filled_state), fill_color_(fill_color), line_color_(line_color), line_width_(line_width), start_point_(start_point), end_point_(end_point) {
+
+}
+GraphicObject::GraphicObject(GraphicObject& g)
+		:shape_num_(g.shape_num_), filled_state_(g.filled_state_), fill_color_(g.fill_color_), line_color_(g.line_color_), line_width_(g.line_width_), start_point_(g.start_point_), end_point_(g.end_point_) {
+
+}
+GraphicObject& GraphicObject::operator= (GraphicObject& g) {
+	shape_num_ = g.shape_num_;
+	filled_state_ = g.filled_state_;
+	fill_color_ = g.fill_color_;
+	line_color_ = g.line_color_;
+	line_width_ = g.line_width_;
+	start_point_ = g.start_point_;
+	end_point_ = g.end_point_;
+	return *this;
+}
+	
+	
+	
+
+
 //class Shape
 Shape::Shape() {}
 Shape::Shape(const Shape& s) : start_point_(s.start_point_),end_point_(s.end_point_), shape_num_(s.shape_num_){}
@@ -83,6 +108,15 @@ void EllipseShape::draw(CDC& a_dc, COLORREF color, COLORREF fcolor, int width, B
 IMPLEMENT_DYNCREATE(MyDocument,CDocument)
 BEGIN_MESSAGE_MAP(MyDocument, CDocument)
 END_MESSAGE_MAP()
+void MyDocument::AddObject(GraphicObject& add_graphic) {
+	graphic_object_array.Add(add_graphic);
+}
+GraphicObject& MyDocument::GetGraphic(int i) {
+	return graphic_object_array[i];
+}
+int MyDocument::GetObjectSize() {
+	return graphic_object_array.GetSize();
+}
 
 //class MyFrame : public CFrameWnd 
 IMPLEMENT_DYNCREATE(MyFrame, CFrameWnd)
@@ -128,7 +162,11 @@ BEGIN_MESSAGE_MAP(MyView, CView)
 END_MESSAGE_MAP()
 MyView::MyView() {
 	l_color_ = RGB(255, 0, 0);
+	filled_color_ = RGB(0, 0, 0);
 	p_shape_ = &line_shape_;
+	line_width_ = 2;
+	
+	
 }
 MyView::~MyView() {}
 afx_msg void MyView::OnDraw(CDC* p_dc) {}
