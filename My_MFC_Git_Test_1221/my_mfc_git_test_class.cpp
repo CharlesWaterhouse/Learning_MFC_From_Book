@@ -171,17 +171,17 @@ afx_msg void MyView::OnDraw(CDC* p_dc) {
 	CView::OnDraw(p_dc);
 	MyDocument* doc = (MyDocument*)GetDocument();
 	int num = doc->GetObjectSize();
-	for (int i = 1; i < num; ++i) {
+	for (int i = 0; i < num; ++i) {
 		GraphicObject* graphic = &(doc->GetGraphic(i));
 		switch (graphic->shape_num_) {
 		case 0:
 			rd_shape_ = new LineShape;
 			break;
 		case 1:
-			rd_shape_ = new EllipseShape;
+			rd_shape_ = new RectangleShape;
 			break;
 		case 2:
-			rd_shape_ = new RectangleShape;
+			rd_shape_ = new EllipseShape;
 			break;
 		}
 		rd_shape_->SetPoint(graphic->start_point_, graphic->end_point_);
