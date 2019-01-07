@@ -20,17 +20,17 @@ class MyApp;
 class GraphicObject :public CObject {
 public:
 	GraphicObject();                                 //It's empty(do nothing)
-	GraphicObject(int shape_num, BOOL filled_state, COLORREF fill_color, COLORREF line_color, int line_width, CPoint start_point, CPoint end_point); 
+	GraphicObject(int shape_num, BOOL fill_state, COLORREF fill_color, COLORREF line_color, int line_width, CPoint start_point, CPoint end_point); 
 	GraphicObject(GraphicObject& g);              
 	GraphicObject& operator= (GraphicObject& g);
-private:
 	int shape_num_;
-	BOOL filled_state_;
-	COLORREF fill_color_;
-	COLORREF line_color_;
-	int line_width_;
 	CPoint start_point_;
 	CPoint end_point_;
+	int line_width_;
+	COLORREF line_color_;
+	BOOL fill_state_;
+	COLORREF fill_color_;
+private:
 };
 
 //it's base class of a painter object, that storage how to paint on th device content
@@ -112,7 +112,7 @@ public:
 	MyView();      
 	~MyView();                                               //It's empty: do nothing
 
-	afx_msg void OnDraw(CDC* p_dc);                          //It's empty: do nothing
+	afx_msg void OnDraw(CDC* p_dc);                          
 	afx_msg void OnLButtonDown(UINT n_flags, CPoint point); 
 	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
@@ -129,8 +129,8 @@ public:
 	afx_msg void OnUpdatRect(CCmdUI* p_cmd_ui);
 	afx_msg void OnUpdatEllipse(CCmdUI* p_cmd_ui);
 private:
-	COLORREF l_color_;
-	COLORREF filled_color_;
+	COLORREF line_color_;
+	COLORREF fill_color_;
 	Shape* p_shape_ = nullptr;
 	LineShape line_shape_;
 	EllipseShape ellipse_shape_;

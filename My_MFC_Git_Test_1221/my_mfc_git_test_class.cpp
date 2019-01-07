@@ -5,17 +5,17 @@
 
 //class GraphicObject :public CObject
 GraphicObject::GraphicObject() {}
-GraphicObject::GraphicObject(int shape_num, BOOL filled_state, COLORREF fill_color, COLORREF line_color, int line_width, CPoint start_point, CPoint end_point)
-		:shape_num_(shape_num), filled_state_(filled_state), fill_color_(fill_color), line_color_(line_color), line_width_(line_width), start_point_(start_point), end_point_(end_point) {
+GraphicObject::GraphicObject(int shape_num, BOOL fill_state, COLORREF fill_color, COLORREF line_color, int line_width, CPoint start_point, CPoint end_point)
+		:shape_num_(shape_num), fill_state_(fill_state), fill_color_(fill_color), line_color_(line_color), line_width_(line_width), start_point_(start_point), end_point_(end_point) {
 
 }
 GraphicObject::GraphicObject(GraphicObject& g)
-		:shape_num_(g.shape_num_), filled_state_(g.filled_state_), fill_color_(g.fill_color_), line_color_(g.line_color_), line_width_(g.line_width_), start_point_(g.start_point_), end_point_(g.end_point_) {
+		:shape_num_(g.shape_num_), fill_state_(g.fill_state_), fill_color_(g.fill_color_), line_color_(g.line_color_), line_width_(g.line_width_), start_point_(g.start_point_), end_point_(g.end_point_) {
 
 }
 GraphicObject& GraphicObject::operator= (GraphicObject& g) {
 	shape_num_ = g.shape_num_;
-	filled_state_ = g.filled_state_;
+	fill_state_ = g.fill_state_;
 	fill_color_ = g.fill_color_;
 	line_color_ = g.line_color_;
 	line_width_ = g.line_width_;
@@ -161,15 +161,35 @@ BEGIN_MESSAGE_MAP(MyView, CView)
 	ON_UPDATE_COMMAND_UI(ID_SHAPE_ELLIPSE, OnUpdatEllipse)
 END_MESSAGE_MAP()
 MyView::MyView() {
-	l_color_ = RGB(255, 0, 0);
-	filled_color_ = RGB(0, 0, 0);
+	line_color_ = RGB(255, 0, 0);
+	fill_color_ = RGB(0, 0, 0);
 	p_shape_ = &line_shape_;
 	line_width_ = 2;
-	
-	
 }
 MyView::~MyView() {}
-afx_msg void MyView::OnDraw(CDC* p_dc) {}
+afx_msg void MyView::OnDraw(CDC* p_dc) {
+	CView::OnDraw(p_dc);
+	MyDocument* doc = (MyDocument*)GetDocument();
+	int num = doc->GetObjectSize();
+	for (int i = 1; i < num; ++i) {
+		GraphicObject* graphic = &(doc->GetGraphic(i));
+		switch (graphic->shape_num_) {
+		case 0:
+			rd_shape_ = new LineShape;
+			break;
+		case 1:
+			rd_shape_ = new EllipseShape;
+			break;
+		case 2:
+			rd_shape_ = new RectangleShape;
+			break;
+		}
+		rd_shape_->SetPoint(graphic->start_point_, graphic->end_point_);
+		rd_shape_->draw((*p_dc), graphic->line_color_, graphic->fill_color_, graphic->line_width_);
+		delete rd_shape_;
+	}
+
+}
 afx_msg void MyView::OnLButtonDown(UINT n_flags, CPoint point) {
 	SetCapture();
 	if (this == GetCapture()) {
@@ -180,39 +200,42 @@ afx_msg void MyView::OnMouseMove(UINT n_flags, CPoint point) {
 	if (this == GetCapture()) {
 		CClientDC a_dc(this);
 		a_dc.SetROP2(R2_NOT);
-		(*p_shape_).draw(a_dc, l_color_, filled_color_, 2);
+		(*p_shape_).draw(a_dc, line_color_, fill_color_, 2);
 		(*p_shape_).end_point_ = point;
-		(*p_shape_).draw(a_dc, l_color_, filled_color_, 2);
+		(*p_shape_).draw(a_dc, line_color_, fill_color_, 2);
 	}
 }
 afx_msg void MyView::OnLButtonUp(UINT n_flags, CPoint point) {
 	if (this == GetCapture()) {
 		CClientDC a_dc(this);
 		(*p_shape_).end_point_ = point;
-		(*p_shape_).draw(a_dc, l_color_, filled_color_, 2);
+		(*p_shape_).draw(a_dc, line_color_, fill_color_, 2);
+		GraphicObject graphic(p_shape_->GetShapeNum(), true, fill_color_, line_color_, line_width_, p_shape_->start_point_, p_shape_->end_point_);
+		MyDocument* doc = (MyDocument*)GetDocument();
+		doc->AddObject(graphic);
 		ReleaseCapture();
 	}
 }
 afx_msg void MyView::OnRed() {
-	l_color_ = RGB(255, 0, 0);
+	line_color_ = RGB(255, 0, 0);
 	((MyFrame*)GetParentFrame())->status_bar_.SetPaneText(1, _T("Red"));
 }
 afx_msg void MyView::OnGreen() {
-	l_color_ = RGB(0, 255, 0);
+	line_color_ = RGB(0, 255, 0);
 	((MyFrame*)GetParentFrame())->status_bar_.SetPaneText(1, _T("Green"));
 }
 afx_msg void MyView::OnBlue() {
-	l_color_ = RGB(0, 0, 255);
+	line_color_ = RGB(0, 0, 255);
 	((MyFrame*)GetParentFrame())->status_bar_.SetPaneText(1, _T("Blue"));
 }
 afx_msg void MyView::OnUpdateRed(CCmdUI* a_cmd_ui) {
-	a_cmd_ui->SetCheck(l_color_ == RGB(255, 0, 0));
+	a_cmd_ui->SetCheck(line_color_ == RGB(255, 0, 0));
 }
 afx_msg void MyView::OnUpdateGreen(CCmdUI* a_cmd_ui) {
-	a_cmd_ui->SetCheck(l_color_ == RGB(0, 255, 0));
+	a_cmd_ui->SetCheck(line_color_ == RGB(0, 255, 0));
 }
 afx_msg void MyView::OnUpdateBlue(CCmdUI* a_cmd_ui) {
-	a_cmd_ui->SetCheck(l_color_ == RGB(0, 0, 255));
+	a_cmd_ui->SetCheck(line_color_ == RGB(0, 0, 255));
 }
 afx_msg void MyView::OnLine() {
 	p_shape_ = &line_shape_;
