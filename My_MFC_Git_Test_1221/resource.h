@@ -21,13 +21,17 @@
 #define ID_SHAPE_ELLIPSE                40037
 #define ID_SHAPE_RECTANGLE              40038
 #define ID_VIEW_STATUS_BAR              40039
+#define ID_FILE_NEW                     40040
+#define ID_FILE_OPEN                    40041
+#define ID_FILE_SAVE                    40042
+#define ID_FILE_SAVEAS                  40043
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
-#define _APS_NEXT_COMMAND_VALUE         40040
+#define _APS_NEXT_COMMAND_VALUE         40044
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

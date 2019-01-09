@@ -18,11 +18,14 @@ class MyView;
 class MyApp;
 
 class GraphicObject :public CObject {
+	DECLARE_SERIAL(GraphicObject)
 public:
 	GraphicObject();                                 //It's empty(do nothing)
 	GraphicObject(int shape_num, BOOL fill_state, COLORREF fill_color, COLORREF line_color, int line_width, CPoint start_point, CPoint end_point); 
 	GraphicObject(GraphicObject& g);              
 	GraphicObject& operator= (GraphicObject& g);
+	void Serialize(CArchive& ar);
+
 	int shape_num_;
 	CPoint start_point_;
 	CPoint end_point_;
@@ -87,7 +90,8 @@ public:
 	void AddObject(GraphicObject& add_graphic);
 	GraphicObject& GetGraphic(int i);
 	int GetObjectSize();
-
+	void Serialize(CArchive& ar);
+	void DeleteContents();
 private:
 	CArray<GraphicObject, GraphicObject> graphic_object_array;
 };
@@ -105,13 +109,14 @@ private:
 	CToolBar tool_bar_;
 };
 
-class MyView :public CView {
+class MyView :public CScrollView {
 	DECLARE_DYNCREATE(MyView)
 	DECLARE_MESSAGE_MAP()
 public:
 	MyView();      
 	~MyView();                                               //It's empty: do nothing
 
+	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);
 	afx_msg void OnDraw(CDC* p_dc);                          
 	afx_msg void OnLButtonDown(UINT n_flags, CPoint point); 
 	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
@@ -128,6 +133,8 @@ public:
 	afx_msg void OnUpdatUpdateLine(CCmdUI* p_cmd_ui);
 	afx_msg void OnUpdatRect(CCmdUI* p_cmd_ui);
 	afx_msg void OnUpdatEllipse(CCmdUI* p_cmd_ui);
+	void LogicalCoor(CPoint* p_point);
+	void PhysicalCoor(CPoint* p_point);
 private:
 	COLORREF line_color_;
 	COLORREF fill_color_;
@@ -140,6 +147,7 @@ private:
 };
 
 class MyApp : public CWinApp {
+	DECLARE_MESSAGE_MAP()
 public:
 	BOOL InitInstance();            
 };

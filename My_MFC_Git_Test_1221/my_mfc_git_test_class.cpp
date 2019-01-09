@@ -4,6 +4,7 @@
 #include "my_mfc_git_test_class.h"
 
 //class GraphicObject :public CObject
+IMPLEMENT_SERIAL(GraphicObject, CObject, 1);
 GraphicObject::GraphicObject() {}
 GraphicObject::GraphicObject(int shape_num, BOOL fill_state, COLORREF fill_color, COLORREF line_color, int line_width, CPoint start_point, CPoint end_point)
 		:shape_num_(shape_num), fill_state_(fill_state), fill_color_(fill_color), line_color_(line_color), line_width_(line_width), start_point_(start_point), end_point_(end_point) {
@@ -23,10 +24,15 @@ GraphicObject& GraphicObject::operator= (GraphicObject& g) {
 	end_point_ = g.end_point_;
 	return *this;
 }
-	
-	
-	
-
+void GraphicObject::Serialize(CArchive& ar) {
+	CObject::Serialize(ar);
+	if (ar.IsStoring()) {
+		ar << shape_num_ << fill_state_ << fill_color_ << line_color_ << line_width_ << start_point_ << end_point_;
+	}
+	else {
+		ar >> shape_num_ >> fill_state_ >> fill_color_ >> line_color_ >> line_width_ >> start_point_ >> end_point_;
+	}
+}
 
 //class Shape
 Shape::Shape() {}
@@ -109,6 +115,7 @@ IMPLEMENT_DYNCREATE(MyDocument,CDocument)
 BEGIN_MESSAGE_MAP(MyDocument, CDocument)
 END_MESSAGE_MAP()
 void MyDocument::AddObject(GraphicObject& add_graphic) {
+	SetModifiedFlag(true);
 	graphic_object_array.Add(add_graphic);
 }
 GraphicObject& MyDocument::GetGraphic(int i) {
@@ -116,6 +123,14 @@ GraphicObject& MyDocument::GetGraphic(int i) {
 }
 int MyDocument::GetObjectSize() {
 	return graphic_object_array.GetSize();
+}
+void MyDocument::Serialize(CArchive& ar) {
+	CObject::Serialize(ar);
+	graphic_object_array.Serialize(ar);
+}
+void MyDocument::DeleteContents() {
+	graphic_object_array.RemoveAll();
+	CDocument::DeleteContents();
 }
 
 //class MyFrame : public CFrameWnd 
@@ -141,9 +156,10 @@ afx_msg int MyFrame::OnCreate(LPCREATESTRUCT lp_create_struct) {
 	return 0;
 }
 
-//class MyView :public CView
-IMPLEMENT_DYNCREATE(MyView, CView)
-BEGIN_MESSAGE_MAP(MyView, CView)
+//class MyView :public CScrollView
+IMPLEMENT_DYNCREATE(MyView, CScrollView)
+BEGIN_MESSAGE_MAP(MyView, CScrollView)
+	ON_WM_CREATE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
@@ -167,6 +183,14 @@ MyView::MyView() {
 	line_width_ = 2;
 }
 MyView::~MyView() {}
+afx_msg int MyView::OnCreate(LPCREATESTRUCT lp_create_struct) {
+	if (CScrollView::OnCreate(lp_create_struct) == -1) {
+		return -1;
+	}
+	CSize DCSize(800, 800);
+	SetScrollSizes(MM_TEXT, DCSize);
+	return 0;
+}
 afx_msg void MyView::OnDraw(CDC* p_dc) {
 	CView::OnDraw(p_dc);                                    //do nothing 
 	MyDocument* doc = (MyDocument*)GetDocument();
@@ -193,6 +217,7 @@ afx_msg void MyView::OnDraw(CDC* p_dc) {
 afx_msg void MyView::OnLButtonDown(UINT n_flags, CPoint point) {
 	SetCapture();
 	if (this == GetCapture()) {
+		LogicalCoor(&point);
 		(*p_shape_).start_point_ = (*p_shape_).end_point_ = point;
 	}
 }
@@ -200,6 +225,8 @@ afx_msg void MyView::OnMouseMove(UINT n_flags, CPoint point) {
 	if (this == GetCapture()) {
 		CClientDC a_dc(this);
 		a_dc.SetROP2(R2_NOT);
+		OnPrepareDC(&a_dc);
+		LogicalCoor(&point);
 		(*p_shape_).draw(a_dc, line_color_, fill_color_, 2);
 		(*p_shape_).end_point_ = point;
 		(*p_shape_).draw(a_dc, line_color_, fill_color_, 2);
@@ -208,11 +235,18 @@ afx_msg void MyView::OnMouseMove(UINT n_flags, CPoint point) {
 afx_msg void MyView::OnLButtonUp(UINT n_flags, CPoint point) {
 	if (this == GetCapture()) {
 		CClientDC a_dc(this);
+		LogicalCoor(&point);
 		(*p_shape_).end_point_ = point;
-		(*p_shape_).draw(a_dc, line_color_, fill_color_, 2);
+		(*p_shape_).draw(a_dc, line_color_, fill_color_, line_width_);
 		GraphicObject graphic(p_shape_->GetShapeNum(), true, fill_color_, line_color_, line_width_, p_shape_->start_point_, p_shape_->end_point_);
 		MyDocument* doc = (MyDocument*)GetDocument();
 		doc->AddObject(graphic);
+		PhysicalCoor(&p_shape_->start_point_);
+		PhysicalCoor(&p_shape_->end_point_);
+		CRect rect(p_shape_->start_point_, p_shape_->end_point_);
+		rect.NormalizeRect();
+		rect.InflateRect(5, 5);
+		InvalidateRect(&rect);
 		ReleaseCapture();
 	}
 }
@@ -258,8 +292,22 @@ afx_msg void MyView::OnUpdatRect(CCmdUI* a_cmd_ui) {
 afx_msg void MyView::OnUpdatEllipse(CCmdUI* a_cmd_ui) {
 	a_cmd_ui->SetCheck((*p_shape_).shape_num_ == 2);
 }
+void MyView::LogicalCoor(CPoint* p_point) {
+	CPoint origin_point = GetScrollPosition();
+	p_point->x = p_point->x + origin_point.x;
+	p_point->y = p_point->y + origin_point.y;
+}
+void MyView::PhysicalCoor(CPoint* p_point) {
+	CPoint origin_point = GetScrollPosition();
+	p_point->x = p_point->x - origin_point.x;
+	p_point->y = p_point->y - origin_point.y;
+}
 
 //class MyApp : public CWinApp 
+BEGIN_MESSAGE_MAP(MyApp,CWinApp)
+	ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
+	ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
+END_MESSAGE_MAP()
 BOOL MyApp::InitInstance() {
 	CSingleDocTemplate* a_doc_template;
 	a_doc_template = new CSingleDocTemplate(IDR_MyFrame,
