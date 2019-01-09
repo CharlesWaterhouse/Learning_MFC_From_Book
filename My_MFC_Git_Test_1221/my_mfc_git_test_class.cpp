@@ -187,8 +187,8 @@ afx_msg int MyView::OnCreate(LPCREATESTRUCT lp_create_struct) {
 	if (CScrollView::OnCreate(lp_create_struct) == -1) {
 		return -1;
 	}
-	CSize DCSize(800, 800);
-	SetScrollSizes(MM_TEXT, DCSize);
+	CSize dc_size(800, 800);
+	SetScrollSizes(MM_TEXT, dc_size);
 	return 0;
 }
 afx_msg void MyView::OnDraw(CDC* p_dc) {
@@ -217,7 +217,7 @@ afx_msg void MyView::OnDraw(CDC* p_dc) {
 afx_msg void MyView::OnLButtonDown(UINT n_flags, CPoint point) {
 	SetCapture();
 	if (this == GetCapture()) {
-		LogicalCoor(&point);
+		DCCoortoDateCoor(&point);
 		(*p_shape_).start_point_ = (*p_shape_).end_point_ = point;
 	}
 }
@@ -226,7 +226,7 @@ afx_msg void MyView::OnMouseMove(UINT n_flags, CPoint point) {
 		CClientDC a_dc(this);
 		a_dc.SetROP2(R2_NOT);
 		OnPrepareDC(&a_dc);
-		LogicalCoor(&point);
+		DCCoortoDateCoor(&point);
 		(*p_shape_).draw(a_dc, line_color_, fill_color_, 2);
 		(*p_shape_).end_point_ = point;
 		(*p_shape_).draw(a_dc, line_color_, fill_color_, 2);
@@ -235,14 +235,14 @@ afx_msg void MyView::OnMouseMove(UINT n_flags, CPoint point) {
 afx_msg void MyView::OnLButtonUp(UINT n_flags, CPoint point) {
 	if (this == GetCapture()) {
 		CClientDC a_dc(this);
-		LogicalCoor(&point);
+		DCCoortoDateCoor(&point);
 		(*p_shape_).end_point_ = point;
 		(*p_shape_).draw(a_dc, line_color_, fill_color_, line_width_);
 		GraphicObject graphic(p_shape_->GetShapeNum(), true, fill_color_, line_color_, line_width_, p_shape_->start_point_, p_shape_->end_point_);
 		MyDocument* doc = (MyDocument*)GetDocument();
 		doc->AddObject(graphic);
-		PhysicalCoor(&p_shape_->start_point_);
-		PhysicalCoor(&p_shape_->end_point_);
+		DateCoorToDCCoor(&p_shape_->start_point_);
+		DateCoorToDCCoor(&p_shape_->end_point_);
 		CRect rect(p_shape_->start_point_, p_shape_->end_point_);
 		rect.NormalizeRect();
 		rect.InflateRect(5, 5);
@@ -292,15 +292,15 @@ afx_msg void MyView::OnUpdatRect(CCmdUI* a_cmd_ui) {
 afx_msg void MyView::OnUpdatEllipse(CCmdUI* a_cmd_ui) {
 	a_cmd_ui->SetCheck((*p_shape_).shape_num_ == 2);
 }
-void MyView::LogicalCoor(CPoint* p_point) {
-	CPoint origin_point = GetScrollPosition();
-	p_point->x = p_point->x + origin_point.x;
-	p_point->y = p_point->y + origin_point.y;
+void MyView::DCCoortoDateCoor(CPoint* p_point) {
+	CPoint scroll_position = GetScrollPosition();
+	p_point->x = p_point->x + scroll_position.x;
+	p_point->y = p_point->y + scroll_position.y;
 }
-void MyView::PhysicalCoor(CPoint* p_point) {
-	CPoint origin_point = GetScrollPosition();
-	p_point->x = p_point->x - origin_point.x;
-	p_point->y = p_point->y - origin_point.y;
+void MyView::DateCoorToDCCoor(CPoint* p_point) {
+	CPoint scroll_position = GetScrollPosition();
+	p_point->x = p_point->x - scroll_position.x;
+	p_point->y = p_point->y - scroll_position.y;
 }
 
 //class MyApp : public CWinApp 

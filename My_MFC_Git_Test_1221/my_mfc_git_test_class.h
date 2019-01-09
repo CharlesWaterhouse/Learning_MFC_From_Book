@@ -133,8 +133,8 @@ public:
 	afx_msg void OnUpdatUpdateLine(CCmdUI* p_cmd_ui);
 	afx_msg void OnUpdatRect(CCmdUI* p_cmd_ui);
 	afx_msg void OnUpdatEllipse(CCmdUI* p_cmd_ui);
-	void LogicalCoor(CPoint* p_point);
-	void PhysicalCoor(CPoint* p_point);
+	void DCCoortoDateCoor(CPoint* p_point);
+	void DateCoorToDCCoor(CPoint* p_point);
 private:
 	COLORREF line_color_;
 	COLORREF fill_color_;
