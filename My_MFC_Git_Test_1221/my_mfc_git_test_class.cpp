@@ -168,7 +168,7 @@ MyView::MyView() {
 }
 MyView::~MyView() {}
 afx_msg void MyView::OnDraw(CDC* p_dc) {
-	CView::OnDraw(p_dc);
+	CView::OnDraw(p_dc);                                    //do nothing 
 	MyDocument* doc = (MyDocument*)GetDocument();
 	int num = doc->GetObjectSize();
 	for (int i = 0; i < num; ++i) {
