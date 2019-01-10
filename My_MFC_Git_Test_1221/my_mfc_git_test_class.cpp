@@ -244,8 +244,8 @@ afx_msg void MyView::OnLButtonUp(UINT n_flags, CPoint point) {
 		GraphicObject graphic(p_shape_->GetShapeNum(), true, fill_color_, line_color_, line_width_, p_shape_->start_point_, p_shape_->end_point_);
 		MyDocument* doc = (MyDocument*)GetDocument();
 		doc->AddObject(graphic);
-		DateCoorToDCCoor(&p_shape_->start_point_);
-		DateCoorToDCCoor(&p_shape_->end_point_);
+		DataCoorToDCCoor(&p_shape_->start_point_);
+		DataCoorToDCCoor(&p_shape_->end_point_);
 		CRect rect(p_shape_->start_point_, p_shape_->end_point_);
 		rect.NormalizeRect();
 		rect.InflateRect(5, 5);
@@ -298,8 +298,8 @@ afx_msg void MyView::OnUpdatEllipse(CCmdUI* a_cmd_ui) {
 void MyView::OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) {
 	if (p_hint!=NULL) {
 		CRect rect((CRect*)p_hint);
-		DateCoorToDCCoor(&rect.TopLeft());
-		DateCoorToDCCoor(&rect.BottomRight());
+		DataCoorToDCCoor(&rect.TopLeft());
+		DataCoorToDCCoor(&rect.BottomRight());
 		rect.NormalizeRect();
 		rect.InflateRect(rect.Width() / 2 + 1, rect.Height() / 2 + 1);
 		InvalidateRect(&rect);
@@ -313,7 +313,7 @@ void MyView::DCCoortoDateCoor(CPoint* p_point) {
 	p_point->x = p_point->x + scroll_position.x;
 	p_point->y = p_point->y + scroll_position.y;
 }
-void MyView::DateCoorToDCCoor(CPoint* p_point) {
+void MyView::DataCoorToDCCoor(CPoint* p_point) {
 	CPoint scroll_position = GetScrollPosition();
 	p_point->x = p_point->x - scroll_position.x;
 	p_point->y = p_point->y - scroll_position.y;

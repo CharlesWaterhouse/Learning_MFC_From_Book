@@ -137,7 +137,7 @@ public:
 	afx_msg void OnUpdatEllipse(CCmdUI* p_cmd_ui);
 	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint);
 	void DCCoortoDateCoor(CPoint* p_point);
-	void DateCoorToDCCoor(CPoint* p_point);
+	void DataCoorToDCCoor(CPoint* p_point);
 private:
 	COLORREF line_color_;
 	COLORREF fill_color_;
