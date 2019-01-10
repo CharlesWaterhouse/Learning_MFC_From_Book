@@ -155,6 +155,9 @@ afx_msg int MyFrame::OnCreate(LPCREATESTRUCT lp_create_struct) {
 	status_bar_.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT));
 	return 0;
 }
+BOOL MyFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* p_context) {
+	return dynamic_split_.Create(this, 2, 2, CSize(1, 1), p_context);
+}
 
 //class MyView :public CScrollView
 IMPLEMENT_DYNCREATE(MyView, CScrollView)
@@ -291,6 +294,19 @@ afx_msg void MyView::OnUpdatRect(CCmdUI* a_cmd_ui) {
 }
 afx_msg void MyView::OnUpdatEllipse(CCmdUI* a_cmd_ui) {
 	a_cmd_ui->SetCheck((*p_shape_).shape_num_ == 2);
+}
+void MyView::OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) {
+	if (p_hint!=NULL) {
+		CRect rect((CRect*)p_hint);
+		DateCoorToDCCoor(&rect.TopLeft());
+		DateCoorToDCCoor(&rect.BottomRight());
+		rect.NormalizeRect();
+		rect.InflateRect(rect.Width() / 2 + 1, rect.Height() / 2 + 1);
+		InvalidateRect(&rect);
+	}
+	else {
+		CScrollView::OnUpdate(p_sender, l_hint, p_hint);
+	}
 }
 void MyView::DCCoortoDateCoor(CPoint* p_point) {
 	CPoint scroll_position = GetScrollPosition();

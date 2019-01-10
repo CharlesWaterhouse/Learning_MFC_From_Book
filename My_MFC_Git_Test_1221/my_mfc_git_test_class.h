@@ -103,10 +103,12 @@ public:
 	MyFrame();                                               //It's empty: do nothing
 	~MyFrame();                                              //It's empty: do nothing
 	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);  
+	BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* p_context);
 	CStatusBar status_bar_;
 private:
 	CMenu* p_menu_;
 	CToolBar tool_bar_;
+	CSplitterWnd dynamic_split_;
 };
 
 class MyView :public CScrollView {
@@ -115,7 +117,7 @@ class MyView :public CScrollView {
 public:
 	MyView();      
 	~MyView();                                               //It's empty: do nothing
-
+	
 	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);
 	afx_msg void OnDraw(CDC* p_dc);                          
 	afx_msg void OnLButtonDown(UINT n_flags, CPoint point); 
@@ -133,6 +135,7 @@ public:
 	afx_msg void OnUpdatUpdateLine(CCmdUI* p_cmd_ui);
 	afx_msg void OnUpdatRect(CCmdUI* p_cmd_ui);
 	afx_msg void OnUpdatEllipse(CCmdUI* p_cmd_ui);
+	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint);
 	void DCCoortoDateCoor(CPoint* p_point);
 	void DateCoorToDCCoor(CPoint* p_point);
 private:
