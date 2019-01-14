@@ -12,7 +12,6 @@ GraphicObject::GraphicObject(int shape_num, BOOL fill_state, COLORREF fill_color
 }
 GraphicObject::GraphicObject(GraphicObject& g)
 		:shape_num_(g.shape_num_), fill_state_(g.fill_state_), fill_color_(g.fill_color_), line_color_(g.line_color_), line_width_(g.line_width_), start_point_(g.start_point_), end_point_(g.end_point_) {
-
 }
 GraphicObject& GraphicObject::operator= (GraphicObject& g) {
 	shape_num_ = g.shape_num_;
@@ -114,22 +113,22 @@ void EllipseShape::draw(CDC& a_dc, COLORREF color, COLORREF fcolor, int width, B
 IMPLEMENT_DYNCREATE(MyDocument,CDocument)
 BEGIN_MESSAGE_MAP(MyDocument, CDocument)
 END_MESSAGE_MAP()
-void MyDocument::AddObject(GraphicObject& add_graphic) {
+void MyDocument::AddGraph(GraphicObject& add_graph) {
 	SetModifiedFlag(true);
-	graphic_object_array.Add(add_graphic);
+	record_graph_array_.Add(add_graph);
 }
-GraphicObject& MyDocument::GetGraphic(int i) {
-	return graphic_object_array[i];
+GraphicObject& MyDocument::GetGraph(int i) {
+	return record_graph_array_[i];
 }
 int MyDocument::GetObjectSize() {
-	return graphic_object_array.GetSize();
+	return record_graph_array_.GetSize();
 }
 void MyDocument::Serialize(CArchive& ar) {
 	CObject::Serialize(ar);
-	graphic_object_array.Serialize(ar);
+	record_graph_array_.Serialize(ar);
 }
 void MyDocument::DeleteContents() {
-	graphic_object_array.RemoveAll();
+	record_graph_array_.RemoveAll();
 	CDocument::DeleteContents();
 }
 
@@ -156,6 +155,91 @@ afx_msg int MyFrame::OnCreate(LPCREATESTRUCT lp_create_struct) {
 	return 0;
 }
 
+//class GlobalView :public CView 
+IMPLEMENT_DYNCREATE(GlobalView, CView)
+BEGIN_MESSAGE_MAP(GlobalView,CView)
+	ON_WM_SIZE()
+END_MESSAGE_MAP()
+GlobalView::GlobalView() {
+	dc_size_ = CSize(800, 800);
+}
+afx_msg void GlobalView::OnDraw(CDC* p_dc) {
+	CView::OnDraw(p_dc);
+	CPen* p_pen = new CPen(PS_SOLID, 1, RGB(255, 0, 0));
+	CPen* p_old_pen = p_dc->SelectObject(p_pen);
+	p_dc->Rectangle(0, 0, int(dc_size_.cx*scale_), int(dc_size_.cy*scale_));
+	p_dc->SelectObject(p_old_pen);
+	delete p_pen;
+	MyFrame* p_frame = (MyFrame*)GetParentFrame();
+	main_view_ = ((MyView*)p_frame->static_split_.GetPane(0, 1))->GetViewPos();
+	DataCoorToDCCoor(&main_view_.TopLeft());
+	DataCoorToDCCoor(&main_view_.BottomRight());
+	p_pen = new CPen(PS_DASH, 1, RGB(0, 0, 0));
+	p_dc->SelectObject(p_pen);
+	p_dc->Rectangle(main_view_);
+	p_dc-> SelectObject(p_old_pen);
+	delete p_pen;
+
+	Shape* p_drawing_shape;
+	MyDocument* p_doc = (MyDocument*)GetDocument();
+	int num = p_doc->GetObjectSize();
+	for (int i; i < num; ++i) {
+		GraphicObject* p_record_graph = &(p_doc->GetGraph(i));
+		switch (p_record_graph->shape_num_) {
+		case 0:
+			p_drawing_shape = new LineShape;
+			break;
+		case 1:
+			p_drawing_shape = new RectangleShape;
+			break;
+		case 2:
+			p_drawing_shape = new EllipseShape;
+			break;
+		default:
+			break;
+		}
+		CPoint new_start_point = p_record_graph->start_point_;
+		CPoint new_end_point = p_record_graph->end_point_;
+		int new_line_width = (int)(p_record_graph->line_width_*scale_ < 1 ? 1 : p_record_graph->line_width_*scale_);
+		DataCoorToDCCoor(&new_start_point);
+		DataCoorToDCCoor(&new_end_point);
+		p_drawing_shape->SetPoint(new_start_point, new_end_point);
+		p_drawing_shape->draw((*p_dc), p_record_graph->line_color_, p_record_graph->fill_color_, new_line_width, p_record_graph->fill_state_);
+		delete p_drawing_shape;
+	}
+}
+void GlobalView::UpdateMainViewRect(CRect repaint_rect) {
+	InvalidateRect(&main_view_);
+	main_view_ = repaint_rect;
+	DataCoorToDCCoor(&main_view_.TopLeft());
+	DataCoorToDCCoor(&main_view_.BottomRight());
+	CClientDC a_dc(this);
+	CPen* p_pen = new CPen(PS_DASH, 1, RGB(0, 0, 0));
+	CPen* p_old_pen = a_dc.SelectObject(p_pen);
+	a_dc.Rectangle(main_view_);
+	a_dc.SelectObject(p_old_pen);
+	delete p_pen;
+}
+void GlobalView::OnSize(UINT n_type, int cx, int cy) {
+	CView::OnSize(n_type, cx, cy);
+	scale_ = (double)cx / dc_size_.cx;
+}
+void GlobalView::DataCoorToDCCoor(CPoint* p_point) {
+	p_point->x = (int)(p_point->x * scale_);
+	p_point->y = (int)(p_point->y * scale_);
+}
+void GlobalView::OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) {
+	if (p_hint != NULL) {
+		CRect rect((CRect*)p_hint);
+		rect.NormalizeRect();
+		DataCoorToDCCoor(&rect.TopLeft());
+		DataCoorToDCCoor(&rect.BottomRight());
+		InvalidateRect(&rect);
+	}
+	else {
+		CView::OnUpdate(p_sender, l_hint, p_hint);
+	}
+}
 //class MyView :public CScrollView
 IMPLEMENT_DYNCREATE(MyView, CScrollView)
 BEGIN_MESSAGE_MAP(MyView, CScrollView)
@@ -196,8 +280,8 @@ afx_msg void MyView::OnDraw(CDC* p_dc) {
 	MyDocument* doc = (MyDocument*)GetDocument();
 	int num = doc->GetObjectSize();
 	for (int i = 0; i < num; ++i) {
-		GraphicObject* graphic = &(doc->GetGraphic(i));
-		switch (graphic->shape_num_) {
+		GraphicObject* p_graph = &(doc->GetGraph(i));
+		switch (p_graph->shape_num_) {
 		case 0:
 			rd_shape_ = new LineShape;
 			break;
@@ -208,8 +292,8 @@ afx_msg void MyView::OnDraw(CDC* p_dc) {
 			rd_shape_ = new EllipseShape;
 			break;
 		}
-		rd_shape_->SetPoint(graphic->start_point_, graphic->end_point_);
-		rd_shape_->draw((*p_dc), graphic->line_color_, graphic->fill_color_, graphic->line_width_);
+		rd_shape_->SetPoint(p_graph->start_point_, p_graph->end_point_);
+		rd_shape_->draw((*p_dc), p_graph->line_color_, p_graph->fill_color_, p_graph->line_width_);
 		delete rd_shape_;
 	}
 
@@ -217,7 +301,7 @@ afx_msg void MyView::OnDraw(CDC* p_dc) {
 afx_msg void MyView::OnLButtonDown(UINT n_flags, CPoint point) {
 	SetCapture();
 	if (this == GetCapture()) {
-		DCCoortoDateCoor(&point);
+		DCCoortoDataCoor(&point);
 		(*p_shape_).start_point_ = (*p_shape_).end_point_ = point;
 	}
 }
@@ -226,7 +310,7 @@ afx_msg void MyView::OnMouseMove(UINT n_flags, CPoint point) {
 		CClientDC a_dc(this);
 		a_dc.SetROP2(R2_NOT);
 		OnPrepareDC(&a_dc);
-		DCCoortoDateCoor(&point);
+		DCCoortoDataCoor(&point);
 		(*p_shape_).draw(a_dc, line_color_, fill_color_, 2);
 		(*p_shape_).end_point_ = point;
 		(*p_shape_).draw(a_dc, line_color_, fill_color_, 2);
@@ -235,14 +319,14 @@ afx_msg void MyView::OnMouseMove(UINT n_flags, CPoint point) {
 afx_msg void MyView::OnLButtonUp(UINT n_flags, CPoint point) {
 	if (this == GetCapture()) {
 		CClientDC a_dc(this);
-		DCCoortoDateCoor(&point);
+		DCCoortoDataCoor(&point);
 		(*p_shape_).end_point_ = point;
 		(*p_shape_).draw(a_dc, line_color_, fill_color_, line_width_);
 		GraphicObject graphic(p_shape_->GetShapeNum(), true, fill_color_, line_color_, line_width_, p_shape_->start_point_, p_shape_->end_point_);
 		MyDocument* doc = (MyDocument*)GetDocument();
-		doc->AddObject(graphic);
-		DateCoorToDCCoor(&p_shape_->start_point_);
-		DateCoorToDCCoor(&p_shape_->end_point_);
+		doc->AddGraph(graphic);
+		DataCoorToDCCoor(&p_shape_->start_point_);
+		DataCoorToDCCoor(&p_shape_->end_point_);
 		CRect rect(p_shape_->start_point_, p_shape_->end_point_);
 		rect.NormalizeRect();
 		rect.InflateRect(5, 5);
@@ -292,15 +376,18 @@ afx_msg void MyView::OnUpdatRect(CCmdUI* a_cmd_ui) {
 afx_msg void MyView::OnUpdatEllipse(CCmdUI* a_cmd_ui) {
 	a_cmd_ui->SetCheck((*p_shape_).shape_num_ == 2);
 }
-void MyView::DCCoortoDateCoor(CPoint* p_point) {
+void MyView::DCCoortoDataCoor(CPoint* p_point) {
 	CPoint scroll_position = GetScrollPosition();
 	p_point->x = p_point->x + scroll_position.x;
 	p_point->y = p_point->y + scroll_position.y;
 }
-void MyView::DateCoorToDCCoor(CPoint* p_point) {
+void MyView::DataCoorToDCCoor(CPoint* p_point) {
 	CPoint scroll_position = GetScrollPosition();
 	p_point->x = p_point->x - scroll_position.x;
 	p_point->y = p_point->y - scroll_position.y;
+}
+CRect MyView::GetViewPos() {
+	//TODO(Charles20190114):
 }
 
 //class MyApp : public CWinApp 

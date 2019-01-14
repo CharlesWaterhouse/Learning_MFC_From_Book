@@ -14,6 +14,7 @@ class RectangleShape;
 
 class MyDocument;
 class MyFrame;
+class GlobalView;
 class MyView;
 class MyApp;
 
@@ -87,13 +88,13 @@ class MyDocument :public CDocument {
 	DECLARE_DYNCREATE(MyDocument)
 	DECLARE_MESSAGE_MAP()
 public:
-	void AddObject(GraphicObject& add_graphic);
-	GraphicObject& GetGraphic(int i);
+	void AddGraph(GraphicObject& add_graph);
+	GraphicObject& GetGraph(int i);
 	int GetObjectSize();
 	void Serialize(CArchive& ar);
 	void DeleteContents();
 private:
-	CArray<GraphicObject, GraphicObject> graphic_object_array;
+	CArray<GraphicObject, GraphicObject> record_graph_array_;
 };
 
 class MyFrame : public CFrameWnd {
@@ -102,11 +103,29 @@ class MyFrame : public CFrameWnd {
 public:
 	MyFrame();                                               //It's empty: do nothing
 	~MyFrame();                                              //It's empty: do nothing
-	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);  
+	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);
+	BOOL OnCreateClient(LPCREATESTRUCT lp_c_s, CCreateContext* p_context);
 	CStatusBar status_bar_;
+	CSplitterWnd static_split_;
 private:
 	CMenu* p_menu_;
 	CToolBar tool_bar_;
+};
+
+class GlobalView :public CView {
+	DECLARE_DYNCREATE(GlobalView)
+	DECLARE_MESSAGE_MAP()
+public:
+	GlobalView();
+	afx_msg void OnDraw(CDC* p_dc);
+	void UpdateMainViewRect(CRect repaint_rect);
+	void OnSize(UINT n_type, int cx, int cy);
+	void DataCoorToDCCoor(CPoint* p_point);
+	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint);
+private:
+	CRect main_view_;
+	double scale_;
+	CSize dc_size_;
 };
 
 class MyView :public CScrollView {
@@ -115,7 +134,6 @@ class MyView :public CScrollView {
 public:
 	MyView();      
 	~MyView();                                               //It's empty: do nothing
-
 	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);
 	afx_msg void OnDraw(CDC* p_dc);                          
 	afx_msg void OnLButtonDown(UINT n_flags, CPoint point); 
@@ -133,8 +151,10 @@ public:
 	afx_msg void OnUpdatUpdateLine(CCmdUI* p_cmd_ui);
 	afx_msg void OnUpdatRect(CCmdUI* p_cmd_ui);
 	afx_msg void OnUpdatEllipse(CCmdUI* p_cmd_ui);
-	void DCCoortoDateCoor(CPoint* p_point);
-	void DateCoorToDCCoor(CPoint* p_point);
+	void DCCoortoDataCoor(CPoint* p_point);
+	void DataCoorToDCCoor(CPoint* p_point);
+	CRect GetViewPos();
+	BOOL OnScrollBy(CSize size_scroll, BOOL b_do_scroll);
 private:
 	COLORREF line_color_;
 	COLORREF fill_color_;
