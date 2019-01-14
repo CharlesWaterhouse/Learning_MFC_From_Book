@@ -117,6 +117,8 @@ END_MESSAGE_MAP()
 void MyDocument::AddObject(GraphicObject& add_graphic) {
 	SetModifiedFlag(true);
 	graphic_object_array.Add(add_graphic);
+	CRect repaint_rect(add_graphic.start_point_, add_graphic.end_point_);
+	UpdateAllViews(NULL, 0, (CObject*)&repaint_rect);
 }
 GraphicObject& MyDocument::GetGraphic(int i) {
 	return graphic_object_array[i];
@@ -243,6 +245,7 @@ afx_msg void MyView::OnLButtonUp(UINT n_flags, CPoint point) {
 		(*p_shape_).draw(a_dc, line_color_, fill_color_, line_width_);
 		GraphicObject graphic(p_shape_->GetShapeNum(), true, fill_color_, line_color_, line_width_, p_shape_->start_point_, p_shape_->end_point_);
 		MyDocument* doc = (MyDocument*)GetDocument();
+		/*
 		doc->AddObject(graphic);
 		DataCoorToDCCoor(&p_shape_->start_point_);
 		DataCoorToDCCoor(&p_shape_->end_point_);
@@ -250,6 +253,7 @@ afx_msg void MyView::OnLButtonUp(UINT n_flags, CPoint point) {
 		rect.NormalizeRect();
 		rect.InflateRect(5, 5);
 		InvalidateRect(&rect);
+		*/
 		ReleaseCapture();
 	}
 }

@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by My_MFC_Git_Test_1221.rc
+// Microsoft Visual C++ 產生的 Include 檔案。
+// 由 My_MFC_Git_Test_1221.rc 使用
 //
 #define IDC_CURSOR1                     123
 #define IDI_ICON1                       124
@@ -25,13 +25,14 @@
 #define ID_FILE_OPEN                    40041
 #define ID_FILE_SAVE                    40042
 #define ID_FILE_SAVEAS                  40043
+#define ID_DYNAMICSPLITTER              40047
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
-#define _APS_NEXT_COMMAND_VALUE         40044
+#define _APS_NEXT_COMMAND_VALUE         40048
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
