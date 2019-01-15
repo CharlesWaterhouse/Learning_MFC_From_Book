@@ -154,6 +154,13 @@ afx_msg int MyFrame::OnCreate(LPCREATESTRUCT lp_create_struct) {
 	status_bar_.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT));
 	return 0;
 }
+BOOL MyFrame::OnCreateClient(LPCREATESTRUCT lp_c_s, CCreateContext* p_context) {
+	static_split_.CreateStatic(this, 1, 2);
+	static_split_.CreateView(0, 0, RUNTIME_CLASS(GlobalView), CSize(100, 400), p_context);
+	static_split_.CreateView(0, 1, RUNTIME_CLASS(MyView), CSize(300, 400), p_context);
+	static_split_.SetActivePane(0, 1);
+	return TRUE;
+}
 
 //class GlobalView :public CView 
 IMPLEMENT_DYNCREATE(GlobalView, CView)
@@ -170,6 +177,7 @@ afx_msg void GlobalView::OnDraw(CDC* p_dc) {
 	p_dc->Rectangle(0, 0, int(dc_size_.cx*scale_), int(dc_size_.cy*scale_));
 	p_dc->SelectObject(p_old_pen);
 	delete p_pen;
+
 	MyFrame* p_frame = (MyFrame*)GetParentFrame();
 	main_view_ = ((MyView*)p_frame->static_split_.GetPane(0, 1))->GetViewPos();
 	DataCoorToDCCoor(&main_view_.TopLeft());
@@ -180,10 +188,10 @@ afx_msg void GlobalView::OnDraw(CDC* p_dc) {
 	p_dc-> SelectObject(p_old_pen);
 	delete p_pen;
 
-	Shape* p_drawing_shape;
+	Shape* p_drawing_shape = nullptr;
 	MyDocument* p_doc = (MyDocument*)GetDocument();
 	int num = p_doc->GetObjectSize();
-	for (int i; i < num; ++i) {
+	for (int i = 0; i < num; ++i) {
 		GraphicObject* p_record_graph = &(p_doc->GetGraph(i));
 		switch (p_record_graph->shape_num_) {
 		case 0:
@@ -318,19 +326,24 @@ afx_msg void MyView::OnMouseMove(UINT n_flags, CPoint point) {
 }
 afx_msg void MyView::OnLButtonUp(UINT n_flags, CPoint point) {
 	if (this == GetCapture()) {
-		CClientDC a_dc(this);
 		DCCoortoDataCoor(&point);
 		(*p_shape_).end_point_ = point;
+		CClientDC a_dc(this);
 		(*p_shape_).draw(a_dc, line_color_, fill_color_, line_width_);
 		GraphicObject graphic(p_shape_->GetShapeNum(), true, fill_color_, line_color_, line_width_, p_shape_->start_point_, p_shape_->end_point_);
-		MyDocument* doc = (MyDocument*)GetDocument();
-		doc->AddGraph(graphic);
+		MyDocument* p_doc = (MyDocument*)GetDocument();
+		p_doc->AddGraph(graphic);
+		/*
 		DataCoorToDCCoor(&p_shape_->start_point_);
 		DataCoorToDCCoor(&p_shape_->end_point_);
-		CRect rect(p_shape_->start_point_, p_shape_->end_point_);
-		rect.NormalizeRect();
-		rect.InflateRect(5, 5);
-		InvalidateRect(&rect);
+		*/
+		CRect repaint_rect(p_shape_->start_point_, p_shape_->end_point_);
+		GetDocument()->UpdateAllViews(this, 0, (CObject*)&repaint_rect);
+		DataCoorToDCCoor(&repaint_rect.TopLeft());
+		DataCoorToDCCoor(&repaint_rect.BottomRight());
+		repaint_rect.NormalizeRect();
+		repaint_rect.InflateRect(5, 5);
+		InvalidateRect(&repaint_rect);
 		ReleaseCapture();
 	}
 }
@@ -387,7 +400,15 @@ void MyView::DataCoorToDCCoor(CPoint* p_point) {
 	p_point->y = p_point->y - scroll_position.y;
 }
 CRect MyView::GetViewPos() {
-	//TODO(Charles20190114):
+	CRect view_rect;
+	CPoint orgin = GetScrollPosition();
+	GetClientRect(&view_rect);
+	return CRect(orgin.x, orgin.y, orgin.x + view_rect.Width(), orgin.y + view_rect.Height());
+}
+BOOL MyView::OnScrollBy(CSize size_scroll, BOOL b_do_scroll) {
+	GlobalView* p_g_view = (GlobalView*)(((MyFrame*)GetParentFrame())->static_split_.GetPane(0, 0));
+	p_g_view->UpdateMainViewRect(GetViewPos());
+	return CScrollView::OnScrollBy(size_scroll, b_do_scroll);
 }
 
 //class MyApp : public CWinApp 
