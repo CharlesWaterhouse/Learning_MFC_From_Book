@@ -237,7 +237,7 @@ afx_msg void MyView::OnLButtonUp(UINT n_flags, CPoint point) {
 		CClientDC a_dc(this);
 		DCCoortoDateCoor(&point);
 		(*p_shape_).end_point_ = point;
-		(*p_shape_).draw(a_dc, line_color_, fill_color_, line_width_);
+		//(*p_shape_).draw(a_dc, line_color_, fill_color_, line_width_);
 		GraphicObject graphic(p_shape_->GetShapeNum(), true, fill_color_, line_color_, line_width_, p_shape_->start_point_, p_shape_->end_point_);
 		MyDocument* doc = (MyDocument*)GetDocument();
 		doc->AddObject(graphic);
