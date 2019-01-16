@@ -234,9 +234,9 @@ afx_msg void MyView::OnMouseMove(UINT n_flags, CPoint point) {
 }
 afx_msg void MyView::OnLButtonUp(UINT n_flags, CPoint point) {
 	if (this == GetCapture()) {
-		CClientDC a_dc(this);
 		DCCoortoDateCoor(&point);
 		(*p_shape_).end_point_ = point;
+		CClientDC a_dc(this);          //Since next line be invalidate, I don't know what meaning of it's existence.
 		//(*p_shape_).draw(a_dc, line_color_, fill_color_, line_width_);
 		GraphicObject graphic(p_shape_->GetShapeNum(), true, fill_color_, line_color_, line_width_, p_shape_->start_point_, p_shape_->end_point_);
 		MyDocument* doc = (MyDocument*)GetDocument();
