@@ -22,6 +22,7 @@
 IMPLEMENT_DYNCREATE(MyView, CFormView)
 
 BEGIN_MESSAGE_MAP(MyView, CFormView)
+	ON_BN_CLICKED(IDC_START_BUTTON, &MyView::OnBnClickedStartButton)
 END_MESSAGE_MAP()
 
 // MyView 建構/解構
@@ -81,3 +82,9 @@ MyDoc* MyView::GetDocument() const // 內嵌非偵錯版本
 
 
 // MyView 訊息處理常式
+
+
+void MyView::OnBnClickedStartButton()
+{
+	// TODO: 在此加入控制項告知處理常式程式碼
+}

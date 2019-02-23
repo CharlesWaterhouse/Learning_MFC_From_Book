@@ -43,6 +43,10 @@ protected:
 // 產生的訊息對應函式
 protected:
 	DECLARE_MESSAGE_MAP()
+private:
+	int m_sleep1;
+public:
+	afx_msg void OnBnClickedStartButton();
 };
 
 #ifndef _DEBUG  // 對 MyView.cpp 中的版本進行偵錯
