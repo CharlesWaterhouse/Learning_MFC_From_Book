@@ -1,3 +1,19 @@
 ﻿  MFC_Chapter_27_12.cpp
-  LINK : 最後的累加連結找不到或未建置 D:\Git\aaaa\MFC_Chapter_27_12\x64\Debug\MFC_Chapter_27_12.exe，正在執行完整連結
-  MFC_Chapter_27_12.vcxproj -> D:\Git\aaaa\MFC_Chapter_27_12\x64\Debug\MFC_Chapter_27_12.exe
+d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.h(57): error C3646: 'OnThreadExit': 未知的覆寫規範
+d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.h(57): error C2275: 'WPARAM': 將此類型當做運算式的使用方式不合法
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\shared\minwindef.h(186): note: 請參閱 'WPARAM' 的宣告
+d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.h(57): error C2146: 語法錯誤: 遺漏 ')' (在識別項 'wParam' 之前)
+d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.h(57): error C2238: 在 ';' 之前有未預期的語彙基元
+  MyView.cpp
+d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.h(57): error C3646: 'OnThreadExit': 未知的覆寫規範
+d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.h(57): error C2275: 'WPARAM': 將此類型當做運算式的使用方式不合法
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\shared\minwindef.h(186): note: 請參閱 'WPARAM' 的宣告
+d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.h(57): error C2146: 語法錯誤: 遺漏 ')' (在識別項 'wParam' 之前)
+d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.h(57): error C2238: 在 ';' 之前有未預期的語彙基元
+d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.cpp(30): error C2065: 'WMU_THREAD_EXIT': 未宣告的識別項
+d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.cpp(30): error C2039: 'OnThreadExit': 不是 'MyView' 的成員
+  d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.h(15): note: 請參閱 'MyView' 的宣告
+d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.cpp(30): error C2065: 'OnThreadExit': 未宣告的識別項
+d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.cpp(145): error C2664: 'void CWnd::SetWindowTextW(LPCTSTR)': 無法將引數 1 從 'const char [5]' 轉換為 'LPCTSTR'
+  d:\git\aaaa\mfc_chapter_27_12\mfc_chapter_27_12\myview.cpp(145): note: 指向的類型沒有相關; 轉換必須有 reinterpret_cast、C-Style 轉換或函式樣式轉換
+  正在產生程式碼...

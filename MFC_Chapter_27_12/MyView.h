@@ -4,6 +4,13 @@
 
 #pragma once
 
+class ThreadInfo {
+public:
+	int sleep_time_ = 0;
+	bool* continue_ = nullptr;
+	int ctrl_id_ = 0;
+	HWND h_wnd_;
+};
 
 class MyView : public CFormView
 {
@@ -38,15 +45,30 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
-protected:
-
 // 產生的訊息對應函式
 protected:
 	DECLARE_MESSAGE_MAP()
 private:
-	int m_sleep1;
-public:
+	afx_msg void OnBnClickedMainstartButton();
 	afx_msg void OnBnClickedStartButton();
+	afx_msg void OnBnClickedSuspendButton();
+	afx_msg void OnBnClickedResumeButton();
+	afx_msg void OnBnClickedResetButton();
+	afx_msg void LRESULT OnThreadExit(WPARAM wParam, LPARAM lParam);
+private:
+	int sleep1_;
+	int sleep2_;
+	int sleep3_;
+	int sleep4_;
+	int sleep5_;
+	BOOL priority_check_;
+	CButton start_button_;
+	CButton suspend_button_;
+	
+	CWinThread* thread_[5];
+	bool continue_[5];
+	CSliderCtrl* silder;
+	static UINT ThreadFun(LPVOID lParam);
 };
 
 #ifndef _DEBUG  // 對 MyView.cpp 中的版本進行偵錯
