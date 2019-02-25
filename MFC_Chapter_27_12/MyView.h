@@ -54,7 +54,7 @@ private:
 	afx_msg void OnBnClickedSuspendButton();
 	afx_msg void OnBnClickedResumeButton();
 	afx_msg void OnBnClickedResetButton();
-	afx_msg void LRESULT OnThreadExit(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnThreadExit(WPARAM wParam, LPARAM lParam);
 private:
 	int sleep1_;
 	int sleep2_;
